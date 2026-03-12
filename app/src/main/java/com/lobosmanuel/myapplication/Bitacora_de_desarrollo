@@ -76,11 +76,22 @@ Nota técnica:
                     b1) bind (función)
                         ->  Mapea los datos de la UI y da formato a los timesptamp a texto
 
+    ii)  FirstFragment (class):
+        *   Vista encargada de interactuar con el usuario}
+        *   Manejo de View Binding con nulabilidad para evitar fugas de memoria
+
+            a)  onViewCreated (función)
+                a1) Inicializa la capa de datos
+                a2) Configura el RV
+                a3) Detecta cada que la lista en room cambia y carga los datos
+                a4) Administra los listernes de los botones (disparadores de eventos)
+
+            b)  handleTransacction (dunción)
+                ->  Procesa la entrada del usuario, valida el contenido y envía la acción al ViewModel.
 
 
 
-n) View
-    i) MainActivity (Class):
+    iii) MainActivity (Class):
     * Es el contenedor principal del contenido a desplegar
     * Responsable de configurar y gesionar el ciclo de vida global
     * En una ARQ MVVM suele ser una "vista ligera"
@@ -95,6 +106,19 @@ n) View
                 botón del sistema, usar commit(), y no commitNow() - esto es por que esta opcion
                 no permite añadir la transacción al backStack (historial de retroceso)
 
+NOTA DE DESARROLLO
+La app cargaba una vista en vacío por que olvidé me "comí" un método, específicamente el onCreateView
 
+La revisión de material en internet llama a este error "headless fragments"; un fragmento sin interfaz,
+que cuando no es un error es una forma de desarrollo para ejecutar lógica en segundo plano (al no inflarse)
+Por eso la consola no acusaba errores
 
+metáfora
+Para que un fragmento funcione, necesita pasar por dos puertas principales en su ciclo de vida:
 
+    1)  onCreateView (La Puerta del Cuerpo):
+        Aquí es donde el código dice: "Usa este XML para crear mis botones y campos de texto".
+        Si esta puerta no existe, el fragmento no tiene "cuerpo" que mostrar.
+
+    2)  onViewCreated (La Puerta de la Mente):
+     Aquí es donde el código dice: "Ahora que mis botones ya existen, dales funcionalidad".
