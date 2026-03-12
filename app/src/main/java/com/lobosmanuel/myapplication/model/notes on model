@@ -1,0 +1,23 @@
+
+NOTAS DE REPOSITORIO DE TRANSACCION
+
+Se sigue el principio de responsabilidad única con TransactionRepository: actúa como un mediador
+limpio entre el ViewModel y la fuente de datos (en este caso, el DAO).
+
+
+¿Por qué es necesario este archivo si ya tenemos el DAO?
+Aunque parezca que solo "pasa" los datos del DAO al ViewModel,
+el Repository es vital por tres razones técnicas:
+
+1) Desacoplamiento:
+Si el día de mañana decides que las transacciones también deben subirse a un servidor
+en la nube (Retrofit), solo tendrás que modificar este archivo. El ViewModel ni siquiera
+se enterará del cambio.
+
+2) Lógica de Negocio:
+Aquí puedes agregar validaciones. Por ejemplo, podrías verificar si hay conexión antes
+de intentar una operación o mapear los datos a un formato diferente.
+
+3) Clean Architecture:
+Mantiene el ViewModel enfocado en la lógica de la UI y los estados, dejando la gestión
+de datos crudos al Repository.

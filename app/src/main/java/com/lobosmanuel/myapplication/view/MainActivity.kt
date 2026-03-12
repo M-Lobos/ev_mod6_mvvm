@@ -1,4 +1,4 @@
-package com.lobosmanuel.myapplication.View
+package com.lobosmanuel.myapplication.view
 
 import android.os.Bundle
 import android.view.Menu

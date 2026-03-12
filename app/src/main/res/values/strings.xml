@@ -1,6 +1,10 @@
 <resources>
     <string name="app_name">My Application</string>
     <string name="action_settings">Settings</string>
+    <!-- item_dollar strings -->
+    <string name="txt_amount_type">BUY - 100 USD</string>
+    <string name="txt_time_stamp">02/03/2026 14:30</string>
+
     <!-- Strings used for fragments for navigation -->
     <string name="first_fragment_label">First Fragment</string>
     <string name="second_fragment_label">Second Fragment</string>

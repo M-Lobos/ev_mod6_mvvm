@@ -1,0 +1,99 @@
+
+*** Flujo ***
+Se crea primero el modelo que contiene la entity, luego las DAO, finalmente el punto de acceso
+
+i) DollarTransaction
+ii) DollarTransactionDao
+iii) AppDataBase
+
+
+*** DollarTransaction***
+Es una Data class (contiene datos, estructura del objeto)
+@Entity
+            ->  Marca una clase de Kotlin como una tabla en la base de datos.
+
+            ->  Cada instancia de esta clase representa una fila en dicha tabla,
+                y sus propiedades se convierten automáticamente en columnas.
+
+@PrimaryKey
+            ->  Identifica un campo específico como la clave principal única de una
+                tabla en la base de datos.
+            ->  Esta clave garantiza que cada registro sea único y permite realizar
+                búsquedas, actualizaciones y eliminaciones eficientes.
+
+
+*** DollarTransactionDao ***
+Es una interfaz (contiene el qué hace el objeto)
+@Dao
+            ->  Marca una interfaz o clase abstracta como el Objeto de Acceso a Datos (DAO)
+
+            ->  Define los métodos que utiliza tu aplicación para consultar, insertar, actualizar
+                o eliminar datos de la base de datos SQLite.
+
+            ->  Permite definir métodos simples en Kotlin que ejecutan consultas SQL complejas
+                mediante la anotación @Query.
+
+@Insert
+            ->  Define métodos en un DAO (Objeto de Acceso a Datos) que insertan automáticamente
+                objetos de entidad en una tabla de base de datos SQLite
+
+@Query
+            ->  Permite ejecutar sentencias SQL personalizadas dentro de tus DAOs (Data Access Objects)
+                para interactuar con la base de datos
+
+            ->  Puente donde escribes código SQL directamente en Kotlin, y Room lo valida en tiempo de
+                compilación.
+
+
+*** AppDataBase ***
+Clase abstracta
+
+Uso de patrón SINGLETON
+El patrón Singleton asegura que una clase tenga una única instancia durante todo el ciclo de vida de
+la aplicación y proporciona un punto de acceso global a ella. Aunque es útil para gestionar recursos
+compartidos (como conexiones a bases de datos o configuraciones), a menudo se considera un "antipatrón"
+debido a que dificulta las pruebas unitarias, genera acoplamiento estrecho y crea estados globales
+difíciles de rastrear.
+
+@Database
+            ->  Identifica una clase como el punto de acceso principal a tu base
+                de datos local.
+
+            ->  Esta clase debe ser abstracta (dollarTransaction paraa el caso),
+                extender de RoomDatabase y servir como contenedor para todas las
+                entidades y DAOs de la aplicación.
+
+@Volatile
+            -> no es una anotación específica de la librería Room, sino una palabra
+            clave del lenguaje Kotlin que se utiliza comúnmente al implementar el patrón
+            Singleton para la instancia de la  base de datos. Asegura que la variable
+            de la instancia sea siempre leída y escrita directamente en la memoria
+            principal, garantizando que todos los hilos vean inmediatamente la versión
+            más reciente del objeto
+
+Alternativas para el patrón Singleton
+
+* Inyección de Dependencias (DI):
+Es la alternativa más recomendada. En lugar de que una clase busque
+el Singleton, el objeto necesario se "inyecta" (se pasa como parámetro) a través del constructor o
+métodos. Esto facilita enormemente la creación de pruebas unitarias al permitir sustituir dependencias
+reales por simuladas (mocks).
+
+* Patrón Monoestado (Monostate):
+Similar al Singleton, pero en lugar de restringir la creación de instancias, todas las instancias de
+la clase comparten los mismos datos (generalmente mediante miembros estáticos). Esto permite tener
+múltiples objetos que actúan sobre el mismo estado global.
+
+* Patrón Fábrica (Factory):
+Permite delegar la creación de objetos a un método o clase dedicada, lo que ofrece mayor flexibilidad
+para controlar cuántas instancias se crean y cuándo, sin acoplar el código al Singleton.
+
+* Patrón Módulo:
+Muy común en JavaScript, permite encapsular variables y funciones dentro de un alcance privado,
+exponiendo solo lo necesario y evitando la contaminación del ámbito global.
+
+* Contenedores IoC (Inversión de Control):
+Utilizar frameworks de inyección de dependencia permite gestionar el ciclo de vida de los objetos de
+manera centralizada, configurando si un objeto debe ser único (Singleton gestionado por el contenedor)
+o creado bajo demanda sin que las clases dependientes necesiten conocer este detalle.
+

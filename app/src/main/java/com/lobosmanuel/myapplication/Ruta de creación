@@ -1,0 +1,15 @@
+1) Se parte por el model
+   i)   Carpeta local (model.local)
+        a) DollarTransaction (data class); se define el modelo de datos del objeto
+        b) DollarTransaction (DAO) (interface); define El acceso a datos, y los métodos (queries)
+        c) AppDataBase (abstract class); define el punto de acceso a la base de datos local
+
+   ii)  TransactionRepository (en model)
+        Mediador entre los datos y el ViewModel (el DAO para el caso), sigue el principio de responsabilidad
+        única y las siguientes consideraciones:
+            1) Desacoplamiento -> el ViewModel no se entera de los cambios
+            2) Lógica de Negocio -> implementar vaildaciones por ejenplo
+            3) Clean Architecture -> la gestion de datos sólo pertenece al model
+
+2) ViewModel
+    TransactionViewModel (clase)
