@@ -1,60 +1,53 @@
 package com.lobosmanuel.myapplication.view
 
 import android.os.Bundle
-import android.view.Menu
-import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
-import androidx.navigation.findNavController
-import androidx.navigation.ui.AppBarConfiguration
-import androidx.navigation.ui.navigateUp
-import androidx.navigation.ui.setupActionBarWithNavController
-import com.google.android.material.snackbar.Snackbar
 import com.lobosmanuel.myapplication.R
 import com.lobosmanuel.myapplication.databinding.ActivityMainBinding
 
+/**
+ * Actividad principal que actúa como contenedor (Host) para los fragmentos de la aplicación.
+ * Gestiona el ciclo de vida básico y la configuración de la interfaz global (Toolbar).
+ */
 class MainActivity : AppCompatActivity() {
 
-    private lateinit var appBarConfiguration: AppBarConfiguration
     private lateinit var binding: ActivityMainBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        // Inicialización de View Binding para acceso directo a los componentes del XML
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        // Configuración de la barra de herramientas (Action Bar)
         setSupportActionBar(binding.toolbar)
 
-        val navController = findNavController(R.id.nav_host_fragment_content_main)
-        appBarConfiguration = AppBarConfiguration(navController.graph)
-        setupActionBarWithNavController(navController, appBarConfiguration)
+        // Instancia del fragmento inicial
+        val firstFragment = FirstFragment()
 
-        binding.fab.setOnClickListener { view ->
-            Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                .setAction("Action", null)
-                .setAnchorView(R.id.fab).show()
+        /**
+         * Verificación de savedInstanceState:
+         * Si es null, es la primera vez que se crea la actividad.
+         * Evita que el fragmento se recree innecesariamente en rotaciones de pantalla.
+         */
+        if (savedInstanceState == null) {
+            // Transacción de fragmentos para cargar el FirstFragment en el contenedor
+            supportFragmentManager.beginTransaction()
+                .replace(R.id.nav_host_fragment_content_main, firstFragment)
+                .commitNow() // Ejecución inmediata y sincrónica de la transacción
         }
-    }
-
-    override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        menuInflater.inflate(R.menu.menu_main, menu)
-        return true
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        return when (item.itemId) {
-            R.id.action_settings -> true
-            else -> super.onOptionsItemSelected(item)
-        }
-    }
-
-    override fun onSupportNavigateUp(): Boolean {
-        val navController = findNavController(R.id.nav_host_fragment_content_main)
-        return navController.navigateUp(appBarConfiguration)
-                || super.onSupportNavigateUp()
     }
 }
+
+
+/**
+ * commitNow() vs commit():
+ *
+ *  Mientras que commit() es asíncrono (se agenda para después),
+ *  commitNow() obliga a que el fragmento se infle de inmediato.
+ *
+ *  En este caso es útil porque aseguras que el fragmento esté
+ *  listo antes de cualquier otra operación en onCreate.
+ *
+ * */

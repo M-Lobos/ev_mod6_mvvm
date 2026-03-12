@@ -1,0 +1,100 @@
+1) Se parte por el model
+   i)   Carpeta local (model.local)
+        a) DollarTransaction (data class); se define el modelo de datos del objeto
+        b) DollarTransactionDao (DAO) (interface); define El acceso a datos, y los métodos (queries)
+        c) AppDataBase (abstract class); define el punto de acceso a la base de datos local
+
+   ii)  TransactionRepository (en model)
+        Mediador entre los datos y el ViewModel (el DAO para el caso), sigue el principio de responsabilidad
+        única y las siguientes consideraciones:
+            1) Desacoplamiento -> el ViewModel no se entera de los cambios
+            2) Lógica de Negocio -> implementar vaildaciones por ejemplo
+            3) Clean Architecture -> la gestion de datos sólo pertenece al model
+
+2) ViewModel
+
+Nota técnica:
+    ->  El ViewModel (Modelo de Vista) es el COMPONENTE INTERMEDIARIO en el patrón MVVM que
+        gestiona la lógica de presentación y el estado de la UI.
+    ->  Actúa como un puente entre el Modelo (datos) y la Vista (UI), exponiendo propiedades
+        y comandos que la interfaz consume mediante enlaces e datos (data binding).
+    ->  Su fin es abstraer la lógica para que la vista sea sencilla, fácil de probar y reutilizar.
+
+
+    i) TransactionViewModel (clase)
+    *Es el cerebro de la arquitectura, gestiona la lógica
+    *Uso de Factory para inyection de dependencias (como el repositorio) cuando no se usan lib externas
+        -> El Factory en Kotlin es un patrón de diseño que encapsula la lógica de creación de objetos.
+
+        a) class TransactioViewModel
+        -> Gestiona la lógica de negocio y el estado de la UI
+        -> Actua como puentre entre el repositorio y las vistas (fragment/activity)
+        -> Crea/inserta una nueva transacción de forma asíncrona
+        -> Puede recuperar el historial de transacciones
+
+        b) class TransactionViewModelFactory
+        -> Es responsable de instanciar el viewModel
+        -> Necesaria porque TransactionViewModel requiere un constructor con parámetros
+
+        lase responsable de instanciar el ViewModel.
+         * Necesaria porque TransactionViewModel requiere un constructor con parámetros.
+         */
+
+*** Hasta Aquí desarrollo de la lógica, ahora las vistas ***
+
+3)  XML (res.layout)
+    i) item_dollar.xml
+        ->  Layout de Fila (o Item Layout), diseño individual de una única
+            celda que se repetirá dentro de un RecyclerView.
+        ->  Básicamente es un molde visual y reutilizable que permite que el RV
+            infle tantas filas como necesite, en este caso tantas transaccioens
+            se realicen
+        ->  En cuanto a sus elementos, están asociados (vinculados/Binding) a los
+            atributos de la data class DollarTransaction mediante el ADAPTER.
+
+    ii) fragment_first.xml
+        ->  Será la vista principal (es el fragmento que se cargará en MainActivity)
+        ->  Como UI, define la diposición de los elementos con los que interactua el usuario
+        ->  Componentes clave
+            a)  Captura de datos: permite que sólo se ingresen números válidos para el dinero
+            b) Triggers: Botones como "Comprar" y "Vender" que gatillan la señal directamente
+            al ViewModel. El ViewModel procesa la lógica y el Adapter se encarga únicamente de
+            reflejar esos cambios visualmente en el historial.
+            c)  Posee un RV que despliega el área del historial de las transacciones.
+
+4)  view
+    i)  TransactionAdapter (class):
+        * Vincular la lista de DollarTransaction con el RecyclerView.
+        * Implementa el patrón ViewHolder para optimizar el rendimiento del scroll.
+
+            a)  submitList (función)
+                ->  Actualiza los datos y le dice al RV que redibuje el conjunto de datos
+
+            b)  TransactionViewHolder (inner class)
+                ->  Clase interna que mantiene las referencias a los componentes visuales
+                    de cada fila en el RV.
+                    b1) bind (función)
+                        ->  Mapea los datos de la UI y da formato a los timesptamp a texto
+
+
+
+
+n) View
+    i) MainActivity (Class):
+    * Es el contenedor principal del contenido a desplegar
+    * Responsable de configurar y gesionar el ciclo de vida global
+    * En una ARQ MVVM suele ser una "vista ligera"
+
+        a) Inizializa el viewBinding para acceder a los componentes XML
+        b) configura la barra de herramientas (actionBar)
+        c) Instancia el fragmento inicial
+        d) Verifica las "saveInstancesStates"
+            ->  Evita que el fragmento se recree en cada rotación de pantalla
+            ->  Gestiona la transacción de fragmentos en el FirstFragment en el contenedor
+            ->  Para navegar entre fragmentos donde el usuario deba poder volver atrás con el
+                botón del sistema, usar commit(), y no commitNow() - esto es por que esta opcion
+                no permite añadir la transacción al backStack (historial de retroceso)
+
+
+
+
